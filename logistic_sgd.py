@@ -84,8 +84,12 @@ def load_data(dataset):
     rval = [(train_set_x, train_set_y), (valid_set_x, valid_set_y),
             (test_set_x, test_set_y)]
     return rval
-def run_logsgd(learning_rate=0.13, n_epochs=1000,
-                dataset='mnist.pkl.gz', batch_size=600):
+
+if __name__ == '__main__':
+    learning_rate=0.13
+    n_epochs=1000
+    dataset='mnist.pkl.gz'
+    batch_size=600
     datasets = load_data(dataset)
 
     train_set_x, train_set_y = datasets[0]

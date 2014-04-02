@@ -49,10 +49,10 @@ class LogisticRegression(object):
             raise NotImplementedError()
 
 if __name__ == '__main__':
-    n_in = 142 * 142
-    n_out = 4
+    n_in = 28 * 28
+    n_out = 10
     # load data and get test dataset
-    dataset = 'my_data.pkl.gz'
+    dataset = 'mnist.pkl.gz'
     f = gzip.open(dataset, 'rb')
     train_set, valid_set, test_set = cPickle.load(f)
     f.close()
@@ -90,3 +90,14 @@ if __name__ == '__main__':
 
     # compiled theano function that returns this value
     classify = theano.function(inputs=[x], outputs=y_pred)
+
+    print 'the result is...'
+    print classify(x_value[0:10])
+    print 'the answer is...'
+    print test_set_y.eval()[0:10]
+    for i in xrange(10):
+        cl = classify(x_value[i:i+1])
+        print str(cl[0]) + ': ' + str(get_p_y_given_x(x_value)[i][cl[0]])
+    cl = classify(x_value[i:i+1])
+    print '5: ' + str(get_p_y_given_x(x_value)[8][cl[0]])
+    print get_p_y_given_x(x_value)[8]
