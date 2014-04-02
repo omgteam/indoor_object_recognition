@@ -49,10 +49,10 @@ class LogisticRegression(object):
             raise NotImplementedError()
 
 if __name__ == '__main__':
-    n_in = 28 * 28
-    n_out = 10
+    n_in = 142 * 142
+    n_out = 4
     # load data and get test dataset
-    dataset = 'mnist.pkl.gz'
+    dataset = 'my_data.pkl.gz'
     f = gzip.open(dataset, 'rb')
     train_set, valid_set, test_set = cPickle.load(f)
     f.close()
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     x_value = test_set_x.get_value()
 
     # take first as an example
-    for i in xrange(10):
+    for i in xrange(n_out):
         print 'Probability that x is of class %i is %f' % (i, get_p_y_given_x(x_value)[0][i])
     #print 'The class should be %i' % test_set_y.
 

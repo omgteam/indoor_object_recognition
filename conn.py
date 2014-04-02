@@ -84,7 +84,7 @@ if __name__ == '__main__':
     dataset='mnist.pkl.gz'
     # number of kernels on each layer
     nkerns=[20, 50]
-    batch_size=500 
+    batch_size=100
 
     rng = numpy.random.RandomState(23455)
 
