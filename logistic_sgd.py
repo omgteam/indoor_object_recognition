@@ -87,9 +87,9 @@ def load_data(dataset):
 
 if __name__ == '__main__':
     learning_rate=0.13
-    n_epochs=1000
-    dataset='mnist.pkl.gz'
-    batch_size=600
+    n_epochs=100
+    dataset='data/caltech.pkl.gz'
+    batch_size=1
     datasets = load_data(dataset)
 
     train_set_x, train_set_y = datasets[0]
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     x = T.matrix('x')
     y = T.ivector('y')
 
-    classifier = LogisticRegression(input=x, n_in=28 * 28, n_out=10)
+    classifier = LogisticRegression(input=x, n_in=3 * 150 * 150, n_out=4)
 
     cost = classifier.negative_log_likelihood(y)
 
@@ -184,6 +184,7 @@ if __name__ == '__main__':
 
                 # if we got the best validation score until now
                 if this_validation_loss < best_validation_loss:
+                    best_params = [classifier.W, classifier.b]
                     #improve patience if loss improvement is good enough
                     if this_validation_loss < best_validation_loss *  \
                        improvement_threshold:
@@ -215,8 +216,11 @@ if __name__ == '__main__':
                           os.path.split(__file__)[1] +
                           ' ran for %.1fs' % ((end_time - start_time)))
 
+    best_params[0] = best_params[0].get_value()
+    best_params[1] = best_params[1].get_value()
+
     print '... saving W and b(params)'
-    f = file('params.save', 'wb')
-    cPickle.dump(classifier.W.get_value(borrow=True), f, -1)
-    cPickle.dump(classifier.b.get_value(borrow=True), f, -1)
+    f = file('params/logistic_caltech.save', 'wb')
+    cPickle.dump(best_params[0], f, -1)
+    cPickle.dump(best_params[1], f, -1)
     f.close()
