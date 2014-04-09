@@ -102,12 +102,34 @@ class LeNetConvPoolLayer(object):
         # store parameters of this layer
         self.params = [self.W, self.b]
 
+def load_data1(dataset):
+    # Load the dataset
+    f = gzip.open(dataset, 'rb')
+    train_set, valid_set, test_set = cPickle.load(f)
+    f.close()
+    #train_set, valid_set, test_set format: tuple(input, target)
+    #input is an numpy.ndarray of 2 dimensions (a matrix)
+    #witch row's correspond to an example. target is a
+    #numpy.ndarray of 1 dimensions (vector)) that have the same length as
+    #the number of rows in the input. It should give the target
+    #target to the example with the same index in the input.
+
+    
+
+    test_set_x, test_set_y = shared_dataset(test_set)
+    valid_set_x, valid_set_y = shared_dataset(valid_set)
+    train_set_x, train_set_y = shared_dataset(train_set)
+
+    rval = [(train_set_x, train_set_y), (valid_set_x, valid_set_y),
+            (test_set_x, test_set_y)]
+    return rval
+
 if __name__ == '__main__':
     learning_rate=0.13
-    nkerns=[3, 3]     # number of kernels on each layer
-    n_epochs=1
-    batch_size=1
-    dataset='data/caltech.pkl.gz'
+    nkerns=[20, 50]
+    n_epochs=10
+    batch_size=1000
+    dataset='cifar.pkl.gz'
     rng = numpy.random.RandomState(23455)
 
     datasets = load_data(dataset)
@@ -130,7 +152,7 @@ if __name__ == '__main__':
     y = T.ivector('y')  # the labels are presented as 1D vector of
                         # [int] labels
 
-    ishape = (150, 150)
+    ishape = (32, 32)
 
     ######################
     # BUILD ACTUAL MODEL #
@@ -139,29 +161,29 @@ if __name__ == '__main__':
 
     # Reshape matrix of rasterized images of shape (batch_size,150*150)
     # to a 4D tensor, compatible with our LeNetConvPoolLayer
-    layer0_input = x.reshape((batch_size, 3, 150, 150))
+    layer0_input = x.reshape((batch_size, 3, 32, 32))
 
-    # filtering: 150-27+1=124
-    # maxpooling: 124/2=62
+    # filtering: 32-5+1=28
+    # maxpooling: 28/2=14
     layer0 = LeNetConvPoolLayer(rng, input=layer0_input,
-            image_shape=(batch_size, 3, 150, 150),
-            filter_shape=(nkerns[0], 3, 27, 27), poolsize=(2, 2))
+            image_shape=(batch_size, 3, ishape[0], ishape[1]),
+            filter_shape=(nkerns[0], 3, 5, 5), poolsize=(2, 2))
 
-    # filtering: 62-27+1=36
-    # maxpooling: 36/2=18
+    # filtering: 14-5+1=10
+    # maxpooling: 10/2=5
     layer1 = LeNetConvPoolLayer(rng, input=layer0.output,
-            image_shape=(batch_size, nkerns[0], 62, 62),
-            filter_shape=(nkerns[1], nkerns[0], 27, 27), poolsize=(2, 2))
+            image_shape=(batch_size, nkerns[0], 14, 14),
+            filter_shape=(nkerns[1], nkerns[0], 5, 5), poolsize=(2, 2))
 
     # shape (batch_size,num_pixels) (i.e matrix of rasterized images)
     layer2_input = layer1.output.flatten(2)
 
     # construct a fully-connected sigmoidal layer
-    layer2 = HiddenLayer(rng, input=layer2_input, n_in=nkerns[1] * 18 * 18,
-                         n_out=1000, activation=T.tanh)
+    layer2 = HiddenLayer(rng, input=layer2_input, n_in=nkerns[1] * 5 * 5,
+                         n_out=200, activation=T.tanh)
 
     # classify the values of the fully-connected sigmoidal layer
-    layer3 = LogisticRegression(input=layer2.output, n_in=1000, n_out=4)
+    layer3 = LogisticRegression(input=layer2.output, n_in=200, n_out=10)
 
     # the cost we minimize during training is the NLL of the model
     cost = layer3.negative_log_likelihood(y)
@@ -244,7 +266,7 @@ if __name__ == '__main__':
 
                 # if we got the best validation score until now
                 if this_validation_loss < best_validation_loss:
-
+                    best_params = layer3.params + layer2.params + layer1.params + layer0.params
                     #improve patience if loss improvement is good enough
                     if this_validation_loss < best_validation_loss *  \
                        improvement_threshold:
