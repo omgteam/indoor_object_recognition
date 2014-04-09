@@ -47,10 +47,9 @@ def gen_rn_weights():
   return W, b
 
 def make_dataset(pkl_path):
-  train_set_x = T.dmatrix()
   x_list, y_list = [], []
   classes = ['cup', 'camera', 'cellphone', 'chair']
-  for i in xrange(50):
+  for i in xrange(40):
     for cl in xrange(len(classes)):
       img_str = 'image_' + (4 - len(str(i + 1))) * '0' + str(i + 1) + '.jpg'
       img = Image.open(open('images/' + classes[cl] + '/' + img_str))
@@ -59,6 +58,15 @@ def make_dataset(pkl_path):
       x_list.append(img)
       y_list.append(cl)
   train_set = tuple([x_list, y_list])
+  x_list, y_list = [], []
+  for i in xrange(10):
+    for cl in xrange(len(classes)):
+      img_str = 'image_' + (4 - len(str(i + 41))) * '0' + str(i + 41) + '.jpg'
+      img = Image.open(open('images/' + classes[cl] + '/' + img_str))
+      img = numpy.asarray(img, dtype='float64') / 256.
+      img = img.swapaxes(0, 2).swapaxes(1, 2).reshape(3 * 150 * 150)
+      x_list.append(img)
+      y_list.append(cl)
   test_set = tuple([x_list, y_list])
   valid_set = tuple([x_list, y_list])
 

@@ -104,7 +104,7 @@ class LeNetConvPoolLayer(object):
 
 if __name__ == '__main__':
     learning_rate=0.13
-    nkerns=[100, 300]     # number of kernels on each layer
+    nkerns=[3, 3]     # number of kernels on each layer
     n_epochs=1
     batch_size=1
     dataset='data/caltech.pkl.gz'
@@ -274,3 +274,8 @@ if __name__ == '__main__':
     print >> sys.stderr, ('The code for file ' +
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
+
+    print '... saving params'
+    f = file('lenet_params.save', 'wb')
+    cPickle.dump(best_params, f, -1)
+    f.close()

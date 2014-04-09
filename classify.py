@@ -53,7 +53,7 @@ if __name__ == '__main__':
     n_in = 3 * 150 * 150
     n_out = 4
     # load data and get test dataset
-    dataset = 'data/caltech.pkl.gz'
+    dataset = '../data/caltech.pkl.gz'
     f = gzip.open(dataset, 'rb')
     train_set, valid_set, test_set = cPickle.load(f)
     f.close()
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     #for i in xrange(10):
      #   cl = classify(x_value[i:i+1])
       #  print str(cl[0]) + ': ' + str(get_p_y_given_x(x_value)[i][cl[0]])
-
+'''
     while True:
         idx = input('put image index:')
         print 'the result is...'
@@ -116,3 +116,4 @@ if __name__ == '__main__':
                 list.append(val)
         img.putdata(list)
         img.save('mnist/' + str(idx) + '.jpg')
+'''
