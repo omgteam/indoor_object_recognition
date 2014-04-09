@@ -2,8 +2,25 @@ import gzip
 import cPickle
 import pylab
 import numpy
+import math
+from logistic_sgd import load_data
+from PIL import Image
 
-if __name__ == '__main__':
+def gen_img(arr, path):
+  l = len(arr) / 3
+  l = int(math.sqrt(l))
+  img = Image.new('RGB', (l, l))
+  list = []
+  for x in xrange(l):
+    for y in xrange(l):
+      r = int(arr[x * l + y])
+      g = int(arr[x * l + y + 1024])
+      b = int(arr[x * l + y + 2048])
+      list.append((r, g, b))
+  img.putdata(list)
+  img.save(path)
+
+def make_dataset():
   x_list, y_list = [], []
   f = open('../data/cifar/data_batch_1', 'rb')
   rt = cPickle.load(f)
@@ -26,3 +43,9 @@ if __name__ == '__main__':
   f.close()
   from subprocess import check_call
   check_call('gzip -f ' + 'cifar.pkl',shell=True)  
+
+if __name__ == '__main__':
+  datasets = load_data('cifar.pkl.gz')
+  arr = datasets[0][0].get_value()[0]
+  path = 'tmp.jpg'
+  gen_img(arr, path)
