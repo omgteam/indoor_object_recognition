@@ -1,0 +1,30 @@
+... building the model
+... training
+training @ iter =  0
+training @ iter =  100
+epoch 1, minibatch 117/117, validation error 73.846154 %
+     epoch 1, minibatch 117/117, test error of best model 73.846154 %
+training @ iter =  200
+epoch 2, minibatch 117/117, validation error 65.384615 %
+     epoch 2, minibatch 117/117, test error of best model 65.384615 %
+training @ iter =  300
+epoch 3, minibatch 117/117, validation error 53.846154 %
+     epoch 3, minibatch 117/117, test error of best model 53.846154 %
+training @ iter =  400
+epoch 4, minibatch 117/117, validation error 59.230769 %
+training @ iter =  500
+epoch 5, minibatch 117/117, validation error 59.230769 %
+training @ iter =  600
+training @ iter =  700
+epoch 6, minibatch 117/117, validation error 54.615385 %
+training @ iter =  800
+epoch 7, minibatch 117/117, validation error 60.769231 %
+training @ iter =  900
+epoch 8, minibatch 117/117, validation error 60.000000 %
+training @ iter =  1000
+epoch 9, minibatch 117/117, validation error 63.076923 %
+training @ iter =  1100
+epoch 10, minibatch 117/117, validation error 59.230769 %
+Optimization complete.
+Best validation score of 53.846154 % obtained at iteration 351,with test performance 53.846154 %
+... saving params
