@@ -1,1 +1,0 @@
-time THEANO_FLAGS="device=cpu,openmp=True,mode=FAST_RUN" python train.py >> train.5.7.output >> time.record&
