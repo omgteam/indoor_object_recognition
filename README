@@ -1,0 +1,12 @@
+#intro#
+	This project combines deep learning model with probability model, to detect object classes.
+
+Dataset:
+	114 classes extracted from caltech-256
+Exe py:
+	indoor_object_recognition.py
+
+
+developor:
+	Junlong Liu, Beihang Univ.
+	Zihao Li, Beihang Univ.
