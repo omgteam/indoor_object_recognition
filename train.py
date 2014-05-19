@@ -23,7 +23,6 @@ if __name__ == '__main__':
 	valid_set_x, valid_set_y = datasets[1]
 	test_set_x, test_set_y = datasets[2]
 
-
     # compute number of minibatches for training, validation and testing
 	n_train_batches = train_set_x.get_value(borrow=True).shape[0]
 	n_valid_batches = valid_set_x.get_value(borrow=True).shape[0]
@@ -59,16 +58,21 @@ if __name__ == '__main__':
 
 	mlp_layers=[]
 	mlp_input = conv_pool_layers[num_conv_pool_layers-1].output.flatten(2)
-	mlp_layers.append(HiddenLayer(rng, input=mlp_input, n_in=mlp_n_in[0],
+	if num_mlp_layers !=0:
+		mlp_layers.append(HiddenLayer(rng, input=mlp_input, n_in=mlp_n_in[0],
                          n_out=mlp_n_out[0], activation=T.tanh))
+	
 	i=1
 	while i<num_mlp_layers:
 		mlp_layers.append(HiddenLayer(rng, input=mlp_layers[i-1].output, n_in=mlp_n_in[i],
 						n_out=mlp_n_out[i], activation=T.tanh))
 		i=i+1
-	
+	if num_mlp_layers!=0:	
+		log_layer_input=mlp_layers[num_mlp_layers-1].output
+	else:
+		log_layer_input=mlp_input
     # classify the values of the fully-connected sigmoidal layer
-	log_layer= LogisticRegression(input=mlp_layers[num_mlp_layers-1].output, n_in=mlp_n_out[num_mlp_layers-1], n_out=log_n_out)
+	log_layer= LogisticRegression(input=log_layer_input, n_in=mlp_n_out[num_mlp_layers-1], n_out=log_n_out)
 
     # the cost we minimize during training is the NLL of the model
 	cost = log_layer.negative_log_likelihood(y)

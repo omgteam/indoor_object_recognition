@@ -11,6 +11,12 @@ from theano.tensor.nnet import conv
 from PIL import Image
 
 def generate_classes(path):
+	"""
+	Iterate through images dir and obtain classes name list
+
+	:type path: string
+	:param path: dir of classes of images, path/Yj/Xi.jpg
+	"""
 	system('ls '+ path +' > tmp')
 	fin=open('tmp','r')
 	classes=[]
@@ -21,35 +27,80 @@ def generate_classes(path):
 	system('rm -rf tmp')
 	return classes
 def file_2_array(path, width, height):
-  if(os.path.isdir(path)):
-     return None
-  img = Image.open(open(path))
+	"""
+	Transform image file to array
+	
+	:type path: string
+	:param path: image path
+
+	:type width: int
+	:param width: the width of output image
+
+	:type height: int
+	:param height: the height of output image
+
+	:type return: numpy.array(1,3,width,height)
+	:param return: array of image
+	"""
+	if(os.path.isdir(path)):
+		return None
+	img = Image.open(open(path))
 #  print path
 #  print img.size
-  img = img.resize((width,height),Image.ANTIALIAS)
+	img = img.resize((width,height),Image.ANTIALIAS)
 #  print img.size
-  img = numpy.asarray(img, dtype='float64') / 256.
+	img = numpy.asarray(img, dtype='float64') / 256.
 #  print img.shape
-  if(img.shape != (width,height,3)):
-     return img
-  img = img.swapaxes(0,2).swapaxes(1,2).reshape(1, 3, width, height)
-  return img
+	if(img.shape != (width,height,3)):
+		return img
+	img = img.swapaxes(0,2).swapaxes(1,2).reshape(1, 3, width, height)
+	return img
 def image_2_array(path, width, height):
-  if(os.path.isdir(path)):
-     return None
-  img = Image.open(open(path))
+	"""
+	Transform image file to array
+	
+	:type path: string
+	:param path: image path
+
+	:type width: int
+	:param width: the width of output image
+
+	:type height: int
+	:param height: the height of output image
+
+	:type return: numpy.array(3*width*height)
+	:param return: array of image
+	"""
+	if(os.path.isdir(path)):
+		return None
+	img = Image.open(open(path))
 #  print path
 #  print img.size
-  img = img.resize((width,height),Image.ANTIALIAS)
+	img = img.resize((width,height),Image.ANTIALIAS)
 #  print img.size
-  img = numpy.asarray(img, dtype='float64') / 256.
+	img = numpy.asarray(img, dtype='float64') / 256.
 #  print img.shape
-  if(img.shape != (width,height,3)):
-     return img
-  img = img.swapaxes(0,2).swapaxes(1,2).reshape(3*width*height)
-  return img
+	if(img.shape != (width,height,3)):
+		return img
+	img = img.swapaxes(0,2).swapaxes(1,2).reshape(3*width*height)
+	return img
 
 def create_formatted_pkl(ori_images_dir, pkl_images_path, train_ratio, ishape):
+	"""
+	Create pkl file using multi-class images
+
+	:type ori_images_dir: string
+	:param ori_images_dir: dir/Yj/Xi.jpg
+
+	:type pkl_images_path: string
+	:param pkl_images_path: output pkl file's path
+
+	:type train_ratio: float
+	:param train_ratio: percentage of what should be training set
+
+	:type ishape: tuple 
+	:param ishape: (width,height)
+	"""
 	train_x_list,train_y_list=[],[]
 	valid_x_list,valid_y_list=[],[]
 
@@ -99,44 +150,16 @@ def create_formatted_pkl(ori_images_dir, pkl_images_path, train_ratio, ishape):
 	from subprocess import check_call
 	check_call('gzip -f ' + pkl_images_path,shell=True)  
 
-
-def my_dataset(pkl_path):
-  x_list, y_list = [], []
-  classes = ['cellphone', 'chair', 'cup', 'drink', \
-            'laptop', 'mouse', 'scissors', 'stapler', 'face', 'pen', 'cake']
-  for i in xrange(90):
-    for cl in xrange(len(classes)):
-      img_str = 'image (' + str(i + 1) + ')' + '.jpg'
-      img = Image.open(open('man_clean/' + classes[cl] + '/' + img_str))
-      img = numpy.asarray(img, dtype='float64') / 256.
-      img = img.swapaxes(0, 2).swapaxes(1, 2).reshape(3 * 80 * 80)
-      x_list.append(img)
-      y_list.append(cl)
-  train_set = tuple([x_list, y_list])
-  x_list, y_list = [], []
-  for i in xrange(10):
-    for cl in xrange(len(classes)):
-      img_str = 'image (' + str(i + 91) + ')' + '.jpg'
-      img = Image.open(open('man_clean/' + classes[cl] + '/' + img_str))
-      img = numpy.asarray(img, dtype='float64') / 256.
-      img = img.swapaxes(0, 2).swapaxes(1, 2).reshape(3 * 80 * 80)
-      x_list.append(img)
-      y_list.append(cl)
-  test_set = tuple([x_list, y_list])
-  valid_set = tuple([x_list, y_list])
-
-  # saving
-  f = file(pkl_path, 'wb')
-  cPickle.dump([train_set, test_set, valid_set], f, -1)
-  f.close()
-  from subprocess import check_call
-  check_call('gzip -f ' + pkl_path,shell=True)  
-
-def resize(path, new_path):
-  img = Image.open(path)
-  img = img.resize((80, 80), Image.ANTIALIAS)
-  img.save(new_path)
 def shuffle_list(x_list,y_list):
+	"""
+	Shuffle x_list,y_list randomly, without changing coressponding yi for each xi
+
+	:type x_list: list
+	:param x_list: images' arrays list
+
+	:type y_list: list
+	:param y_list: images' classes list
+	"""
 	x_len=len(x_list)
 	y_len=len(y_list)
 	print x_len
@@ -150,9 +173,25 @@ def shuffle_list(x_list,y_list):
 		tmp=y_list[i]
 		y_list[i]=y_list[swap_index]
 		y_list[swap_index]=tmp
-	
+
+def subtract_list(x_list):
+	for i in xrange(len(x_list)):
+		x_list[i]=x_list[i]-numpy.mean(x_list[i])
+
+def nor_list(x_list):
+	for i in xrange(len(x_list)):
+		x_list[i]=x_list[i]/numpy.std(x_list[i])
+def abs_list(x_list):
+	for i in xrange(len(x_list)):
+		x_list[i]=numpy.abs(x_list[i])
+
 def load_data(dataset):
-    # Load the dataset
+	"""
+	Load pkl data into memory, namely[(xi,yi)]
+	
+	:type dataset: string
+	:param dataset: pkl path. pkl is created by func my_utils.create_formatted_pkl
+	"""
 	f = gzip.open(dataset+'.gz', 'rb')
 	train_set, valid_set, test_set = cPickle.load(f)
 
@@ -162,7 +201,19 @@ def load_data(dataset):
 	test_y_list=test_set[1]
 	valid_x_list=valid_set[0]
 	valid_y_list=valid_set[1]
-
+	from parameters import sub_mode,nor_mode,abs_mode
+	if(sub_mode==1):
+		subtract_list(train_x_list)
+		subtract_list(test_x_list)
+		subtract_list(valid_x_list)
+	if(nor_mode==1):
+		nor_list(train_x_list)
+		nor_list(test_x_list)
+		nor_list(valid_x_list)
+	if(abs_mode==1):
+		abs_list(train_x_list)
+		abs_list(test_x_list)
+		abs_list(valid_x_list)
 	shuffle_list(train_x_list,train_y_list)
 	shuffle_list(test_x_list,test_y_list)
 	shuffle_list(valid_x_list,valid_y_list)
@@ -205,6 +256,9 @@ def load_data(dataset):
 	return rval
 
 def download_urls(input_path,output_dir):
+	"""
+	Download image given specified urls
+	"""
 	fin=open(input_path,'r')
 	for line in fin.readlines():
 		input_path=input_path.strip()
@@ -212,6 +266,11 @@ def download_urls(input_path,output_dir):
 		img_name=splits[len(splits)-1]
 		os.system('wget '+line+' -o '+output_dir+'/'+img_name)
 def generate_probability_model(relation_pairs_path, class_int_dict):
+	"""
+	Generate probabiliry model to improve classification accuracy.
+
+	:type relation_pairs_path: file path of class_a,class_b pairs
+	"""
 	from parameters import num_classes
 	fin=open(relation_pairs_path)
 	fre_matrix=numpy.array(numpy.ones(num_classes**2,dtype='int32').reshape((num_classes,num_classes)))

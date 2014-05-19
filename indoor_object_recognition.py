@@ -6,7 +6,20 @@ from skimage import morphology
 from parameters import *
 from my_utils import generate_probability_model
 from classify import get_classify_func,classify_image
-def get_object_images(image_path,output_shape):
+def get_object_images(image_path,output_shape=ishape):
+	"""
+	Get sub images of objects existing in an image
+
+	:type image_path: string
+	:param image_path: image path to be extracted objects
+
+	:type output_shape: tuple (ishape[0],ishape[1])
+	:param output_shape: shape of sub-images that contains only one object
+
+	:type return: list [Images with output_shape]
+	:param return: list of sub images with given shape
+	"""
+
 	img=Image.open(image_path)
 	grey_img=numpy.asarray(img.convert('L'))
 	otsu_val=filter.threshold_otsu(grey_img)

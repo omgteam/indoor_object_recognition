@@ -32,6 +32,12 @@ def shared_dataset(data_xy, borrow=True):
                              borrow=borrow)
     return shared_x, T.cast(shared_y, 'int32')
 def get_classify_func():
+	"""
+	Reconstruct classify model using training output
+
+	:type return: theano.function
+	:param return: function that return class index given image array(numpy.array(1,3,ishape[0],ishape[1])
+	"""
 	n_in = ishape[0]*ishape[1]
 	n_out = log_n_out
 
@@ -93,18 +99,20 @@ def get_classify_func():
 	# compiled theano function that returns this value
 	classify = theano.function(inputs=[conv_pool_input], outputs=(log_layer.y_pred,log_layer.p_y_given_x))
 	return classify
-def top5(path):
-    get_p_y_given_x = theano.function(inputs=[layer0_input], outputs=layer4.p_y_given_x)
-    plist = list(get_p_y_given_x(file_2_array(path, ishape[0], ishape[1]))[0])
-    plist = list(enumerate(plist))
-    plist.sort(cmp=lambda x, y: cmp(x[1], y[1]))
-    rt = []
-    for i in xrange(5):
-        tmp = plist.pop()
-        rt.append((classes[tmp[0]], format(tmp[1], '.2%')))
-    return rt
 
 def classify_image(path=None,image=None,classify_func=None):
+	"""
+	Classify an image to class index
+
+	:type path: string
+	:param path: image path
+
+	:type image: numpy.array(1,3,ishape[0],ishape[1])
+	:param image: image to be classified
+
+	:type classify_func: theano.function
+	:param classify_func: classification function using training output
+	"""
 	if(path==None and image==None):
 		return None
 	if(classify_func == None):
