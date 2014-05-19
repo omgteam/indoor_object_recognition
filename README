@@ -3,10 +3,17 @@
 
 Dataset:
 	114 classes extracted from caltech-256
-Exe py:
+Datasets preparation:
+	my_utils.py: create_formmated_pkl
+Training:
+	train.py
+Probability model construction:
+	my_utils.py: generate_probability_model
+Indoor Object Recognition:
 	indoor_object_recognition.py
-
 
 developor:
 	Junlong Liu, Beihang Univ.
 	Zihao Li, Beihang Univ.
+Contact:
+	liujunlong.cn@gmail.com
